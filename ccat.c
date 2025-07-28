@@ -1,9 +1,10 @@
 #include <stdio.h>
-#include <stdlib.h>
+#include <fcntl.h>
+#include <unistd.h>
 #include <errno.h>
 
 #define PATH_SIZE 4096
-#define CHUNK_SIZE 1024
+#define BUFF_SIZE 1024
  
 #define ANSI_COLOR_RED     "\x1b[31m"
 #define ANSI_COLOR_GREEN   "\x1b[32m"
@@ -17,25 +18,25 @@ void print_buffer(const char *buffer, size_t bytes);
 
 int main(int argc, char *argv[]) {
   char pathname[PATH_SIZE];
-  char buffer[CHUNK_SIZE];
+  char buff[BUFF_SIZE];
   size_t bytes_read;
 
   while (--argc > 0) {    
     snprintf(pathname, PATH_SIZE, "%s", *(++argv));
-    FILE *fptr = fopen(pathname, "r");  
-    if (fptr == NULL) {
+    int fd = open(pathname, O_RDONLY);  
+    if (fd == -1) {
       fprintf(stderr, "Failed to open file '%s'\n", pathname);
       continue;
     }
     
     printf(ANSI_COLOR_BLUE "\n\n%s\n" ANSI_COLOR_RESET "\n", pathname);
-    while ((bytes_read = fread(buffer, 1, CHUNK_SIZE, fptr)) > 0) {
+    while ((bytes_read = read(fd, buff, BUFF_SIZE)) > 0) {
       // Print the buffer we just read
-      print_buffer(buffer, bytes_read);
+      print_buffer(buff, bytes_read);
     }
 
     // Close file after reading
-    fclose(fptr);
+    close(fd);
   }
   
   return 0;
