@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
     snprintf(pathname, PATH_SIZE, "%s", *(++argv));
     int fd = open(pathname, O_RDONLY);  
     if (fd == -1) {
-      fprintf(stderr, "Failed to open file '%s'\n", pathname);
+      fprintf(stderr, "\nFailed to open file '%s'\n", pathname);
       continue;
     }
     
